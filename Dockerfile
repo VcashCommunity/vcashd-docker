@@ -10,7 +10,7 @@ RUN apt-get update \
     && apt-get install -y wget \
     && sh build.sh From_Source \
     && apt-get remove -y software-properties-common build-essential \
-    && apt-get auto-remove --purge -y
+    && apt-get autoremove -y --purge
 
 VOLUME ["/root/.Vcash"]
 
