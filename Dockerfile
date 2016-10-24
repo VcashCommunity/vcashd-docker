@@ -1,6 +1,6 @@
 FROM ubuntu:16.04
 
-ENV VCASH_VERSION 713ca8b0a02d010f62cf9d8c1960e5b77559d938
+ENV VCASH_VERSION master
 
 COPY build.sh .
 RUN chmod +x build.sh
