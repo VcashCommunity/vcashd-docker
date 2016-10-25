@@ -14,4 +14,7 @@ RUN apt-get update \
 
 VOLUME ["/root/.Vcash"]
 
+COPY rpc.sh .
+RUN source rpc.sh
+
 CMD ["vcashd"]
