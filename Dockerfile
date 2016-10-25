@@ -8,6 +8,7 @@ RUN chmod +x build.sh
 RUN apt-get update \
     && apt-get install -y software-properties-common \
     && apt-get install -y wget \
+        curl \
     && sh build.sh From_Source \
     && apt-get remove -y software-properties-common build-essential \
     && apt-get autoremove -y --purge
@@ -15,6 +16,6 @@ RUN apt-get update \
 VOLUME ["/root/.Vcash"]
 
 COPY rpc.sh .
-RUN source rpc.sh
+RUN . rpc.sh
 
 CMD ["vcashd"]
