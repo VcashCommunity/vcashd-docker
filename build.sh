@@ -12,33 +12,24 @@ echo $1
 #################################################################
 if [ $1 = 'From_Source' ]; then
 #################################################################
-# Update Ubuntu and install prerequisites for running Vcash   #
-#################################################################
-apt-get update
-#################################################################
 # Build Vcash from source                                     #
 #################################################################
 NPROC=$(nproc)
 echo "nproc: $NPROC"
 VCASH_ROOT=$(pwd)
-#################################################################
-# Install all necessary packages for building Vcash           #
-#################################################################
-apt-get -y install git build-essential
-apt-get update
 
 file=test/bin/gcc-*/release/link-static/stack
 if [ ! -e "$file" ]
 then
     rm -rf .git
     git init .
-    git remote add -t \* -f origin https://github.com/john-connor/vcash.git
+    git remote add -t \* -f origin https://github.com/vcashcommunity/vanillacash.git
     git checkout ${VCASH_VERSION:-master}
 fi
 
 mkdir -p deps/openssl/
 cd deps/openssl/
-wget --no-check-certificate "https://openssl.org/source/openssl-1.0.1q.tar.gz"
+wget --no-check-certificate "https://openssl.org/source/openssl-1.0.2k.tar.gz"
 tar -xzf openssl-*.tar.gz
 rm -rf openssl-*.tar.gz
 cd openssl-*
@@ -49,28 +40,28 @@ cd $VCASH_ROOT
 mkdir -p deps/db/
 cd deps/db/
 wget --no-check-certificate "https://download.oracle.com/berkeley-db/db-6.1.29.NC.tar.gz"
-tar -xzf db-6.1.29.NC.tar.gz
-rm -rf db-6.1.29.NC.tar.gz
-cd db-6.1.29.NC/build_unix/
+tar -xzf db-*.tar.gz
+rm -rf db-*.tar.gz
+cd db-*/build_unix/
 ../dist/configure --enable-cxx --prefix=$VCASH_ROOT/deps/db/
 make && make install
 cd $VCASH_ROOT
 
 cd deps
 wget "https://sourceforge.net/projects/boost/files/boost/1.53.0/boost_1_53_0.tar.gz"
-tar -xzf boost_1_53_0.tar.gz
-rm -rf boost_1_53_0.tar.gz
-mv boost_1_53_0 boost
+tar -xzf boost*.tar.gz
+rm -rf boost*.tar.gz
+mv boost* boost
 cd boost
 ./bootstrap.sh
 ./bjam link=static toolset=gcc cxxflags=-std=gnu++0x --with-system release
 cd $VCASH_ROOT
 
-cd test
-../deps/boost/bjam toolset=gcc cxxflags="-std=gnu++0x -fpermissive" release
+cd coin/test
+../../deps/boost/bjam toolset=gcc cxxflags="-std=gnu++0x -fpermissive" release
 cd $VCASH_ROOT
 
-cp test/bin/gcc-*/release/link-static/stack /usr/bin/vcashd
+cp coin/test/bin/gcc-*/release/link-static/stack /usr/bin/vcashd
 
 else
 #################################################################
