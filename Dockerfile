@@ -1,21 +1,34 @@
-FROM ubuntu:16.04
+FROM debian:stretch AS builder
 
-ENV VCASH_VERSION 01ab1fc1dfa1cac1c05c08d1686ecaa3a15fb7cb
+RUN set -ex \
+    \
+    && apt-get update \
+    && apt-get install -y \
+       software-properties-common \
+       build-essential \
+       git \
+       wget \
+       curl
 
 COPY build.sh .
-RUN chmod +x build.sh
 
-RUN apt-get update \
-    && apt-get install -y software-properties-common \
-    && apt-get install -y wget \
-        curl \
-    && sh build.sh From_Source \
-    && apt-get remove -y software-properties-common build-essential \
-    && apt-get autoremove -y --purge
+ENV VCASH_VERSION 0595c877984609e40e04c91e671bd81555a911eb
 
-VOLUME ["/root/.Vcash"]
+RUN set -ex \
+    \
+    && chmod +x build.sh \
+    && sh build.sh From_Source
 
-COPY rpc.sh .
-RUN . rpc.sh
 
-CMD ["vcashd"]
+
+
+
+# Final image
+
+FROM gcr.io/distroless/cc
+
+COPY --from=builder /usr/bin/vcashd /bin/
+
+VOLUME ["/home/.Vcash"]
+
+ENTRYPOINT ["vcashd"]
