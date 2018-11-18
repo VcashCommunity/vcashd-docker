@@ -23,8 +23,8 @@ if [ ! -e "$file" ]
 then
     rm -rf .git
     git init .
-    git remote add -t \* -f origin https://github.com/vcashcommunity/vanillacash.git
-    git checkout ${VCASH_VERSION:-master}
+    git remote add -t \* -f origin https://github.com/vcashcommunity/vcash.git
+    git checkout ${VCASH_VERSION:-vanilla}
 fi
 
 mkdir -p deps/openssl/
